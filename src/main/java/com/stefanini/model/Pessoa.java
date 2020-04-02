@@ -70,7 +70,12 @@ public class Pessoa implements Serializable{
 	@NotNull
 	@Column(name = "ST_PESSOA")
 	private Boolean situacao;
-
+	/**
+   * caminho do avatar da Pessoa
+   */
+  @Column(name = "DS_CAMINHO_IMAGEM")
+  private String avatar;
+	
 	/**
 	 * Mapeamento de Enderecos Unidirecional
 	 */
@@ -201,6 +206,16 @@ public class Pessoa implements Serializable{
 		return "Pessoa [id=" + id + ", nome=" + nome + ", email=" + email + ", dataNascimento=" + dataNascimento
 				+ ", situacao=" + situacao + "]";
 	}
+
+
+  public String getAvatar() {
+    return avatar;
+  }
+
+
+  public void setAvatar(String avatar) {
+    this.avatar = avatar;
+  }
 	
 	
 	

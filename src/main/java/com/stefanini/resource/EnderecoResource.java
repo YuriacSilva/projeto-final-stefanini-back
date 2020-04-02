@@ -104,13 +104,13 @@ public class EnderecoResource {
     @GET
     @Path("{id}")
     public Response obterEndereco(@PathParam("id") Long id) {
-        return enderecoServico.encontrar(id).map(endereco -> Response.ok(endereco).build()).orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
+      return enderecoServico.encontrar(id).map(endereco -> Response.ok(endereco).build()).orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
     }
 
     @GET
     @Path("cep/{cep}")
-    public Response obterEnderecoPorCep(@PathParam("cep") String cep) throws IOException {
-        return Response.ok(enderecoServico.buscarCep(cep)).build();
+    public Response obterEnderecoPorCep(@PathParam("cep") String cep) {
+      return enderecoServico.buscarCep(cep).map(dadosCep -> Response.ok(dadosCep).build()).orElseGet(() -> Response.status(Response.Status.BAD_REQUEST).build());
     }
     
 }

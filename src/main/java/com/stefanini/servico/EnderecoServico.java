@@ -63,19 +63,23 @@ public class EnderecoServico implements Serializable {
 		return dao.encontrar(id);
 	}
 
-	public Object buscarCep(String cep) throws IOException {
-		URL urlReq = new URL("https://viacep.com.br/ws/" + cep + "/json/");
-        HttpURLConnection con = (HttpURLConnection) urlReq.openConnection();
-        con.setRequestMethod("GET");
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder response = new StringBuilder();
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
-        in.close();
-        con.disconnect();
-        return response.toString();
+	public Optional<String> buscarCep(String cep) {
+		try {
+  	  URL urlReq = new URL("https://viacep.com.br/ws/" + cep + "/json/");
+          HttpURLConnection con = (HttpURLConnection) urlReq.openConnection();
+          con.setRequestMethod("GET");
+          BufferedReader in = new BufferedReader(
+                  new InputStreamReader(con.getInputStream(), "UTF-8"));
+          String inputLine;
+          StringBuilder response = new StringBuilder();
+          while ((inputLine = in.readLine()) != null) {
+              response.append(inputLine);
+          }
+          in.close();
+          con.disconnect();
+          return Optional.ofNullable(response.toString());
+		} catch (IOException e) {
+		  return Optional.empty();
+		}
 	}
 }
