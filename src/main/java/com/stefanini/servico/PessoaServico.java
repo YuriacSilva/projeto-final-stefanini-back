@@ -1,11 +1,8 @@
 package com.stefanini.servico;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.Serializable;
-import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
@@ -13,7 +10,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
@@ -22,6 +18,7 @@ import com.stefanini.dto.PaginacaoGenericDTO;
 import com.stefanini.dto.PessoaDto;
 import com.stefanini.exception.NegocioException;
 import com.stefanini.model.Pessoa;
+import com.stefanini.parser.PessoaParser;
 import com.stefanini.servico.util.PessoaServicoUtil;
 
 /**
@@ -46,35 +43,42 @@ public class PessoaServico implements Serializable {
 
   @Inject
   private PessoaPerfilServico pessoaPerfilServico;
+  
+  @Inject
+  private PessoaParser pessoaParser;
 
   /**
    * Salvar os dados de uma Pessoa
    */
   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-  public Pessoa salvar(@Valid Pessoa pessoa) {
-    return dao.salvar(pessoa);
+  public PessoaDto salvar(@Valid PessoaDto pessoaDto) {
+    pessoaDto.setImagem(PessoaServicoUtil.transfereImagem(pessoaDto));
+    Pessoa entidade = pessoaParser.toEntity(pessoaDto);
+    return pessoaParser.toDto(dao.salvar(entidade));
   }
 
   /**
    * Validando se existe pessoa com email
    */
-  public Boolean validarPessoa(@Valid Pessoa pessoa) {
-    if (pessoa.getId() != null) {
-      Optional<Pessoa> encontrar = dao.encontrar(pessoa.getId());
-      if (encontrar.get().getEmail().equals(pessoa.getEmail())) {
+  public Boolean validarPessoa(@Valid PessoaDto pessoaDto) {
+    if (pessoaDto.getId() != null) {
+      Optional<Pessoa> encontrar = dao.encontrar(pessoaDto.getId());
+      if (encontrar.get().getEmail().equals(pessoaDto.getEmail())) {
         return Boolean.TRUE;
       }
     }
-    Optional<Pessoa> pessoa1 = dao.buscarPessoaPorEmail(pessoa.getEmail());
-    return pessoa1.isEmpty();
+    Optional<Pessoa> pessoa = dao.buscarPessoaPorEmail(pessoaDto.getEmail());
+    return pessoa.isEmpty();
   }
 
   /**
    * Atualizar o dados de uma pessoa
    */
   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-  public Pessoa atualizar(@Valid Pessoa entity) {
-    return dao.atualizar(entity);
+  public PessoaDto atualizar(@Valid PessoaDto pessoaDto) {
+    pessoaDto.setImagem(PessoaServicoUtil.transfereImagem(pessoaDto));
+    Pessoa entidade = pessoaParser.toEntity(pessoaDto);
+    return pessoaParser.toDto(dao.atualizar(entidade));
   }
 
   /**
@@ -101,7 +105,11 @@ public class PessoaServico implements Serializable {
    */
 //	@Override
   public Optional<Pessoa> encontrar(Long id) {
-    return dao.encontrar(id);
+    Pessoa retorno = dao.encontrar(id).get();
+    if(Objects.nonNull(retorno.getImagem()) && !retorno.getImagem().isEmpty()) {
+      retorno.setImagem(PessoaServicoUtil.PREFIXO_IMAGEM + PessoaServicoUtil.recuperarImagem64(retorno.getEmail()));
+    }
+    return Optional.of(retorno);
   }
 
   public Optional<List<Pessoa>> obterCompletas() {
@@ -110,11 +118,6 @@ public class PessoaServico implements Serializable {
 
   public PaginacaoGenericDTO<Pessoa> paginarPessoa(Integer indexAtual, Integer qtdPagina) {
     return dao.buscarPessoasPaginadas(indexAtual, qtdPagina);
-  }
-
-  public Object salvarComAnexo(PessoaDto pessoaDto) {
-    PessoaServicoUtil.transfereImagem(pessoaDto);
-    return null;
   }
 
 }

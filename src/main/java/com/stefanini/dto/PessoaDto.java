@@ -21,8 +21,7 @@ public class PessoaDto implements Serializable {
 	private Boolean situacao;
 	private Set<Endereco> enderecos = new HashSet<>();
 	private Set<Perfil> perfils = new HashSet<>();
-	private String nomeAnexo;
-	private String dadosAnexo;
+	private String imagem;
 
 	public Long getId() {
 		return id;
@@ -80,20 +79,12 @@ public class PessoaDto implements Serializable {
 		this.perfils = perfils;
 	}
 
-  public String getNomeAnexo() {
-    return nomeAnexo;
+  public String getImagem() {
+    return imagem;
   }
 
-  public void setNomeAnexo(String nomeAnexo) {
-    this.nomeAnexo = nomeAnexo;
-  }
-
-  public String getDadosAnexo() {
-    return dadosAnexo;
-  }
-
-  public void setDadosAnexo(String dadosAnexo) {
-    this.dadosAnexo = dadosAnexo;
+  public void setImagem(String imagem) {
+    this.imagem = imagem;
   }
 
 }

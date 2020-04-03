@@ -1,20 +1,28 @@
 package com.stefanini.resource;
 
-import com.stefanini.dto.ErroDto;
-import com.stefanini.dto.PessoaDto;
-import com.stefanini.dto.SucessoDto;
-import com.stefanini.exception.NegocioException;
-import com.stefanini.model.Pessoa;
-import com.stefanini.servico.PessoaServico;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Logger;
+import javax.ws.rs.core.UriInfo;
+
+import com.stefanini.dto.ErroDto;
+import com.stefanini.dto.PessoaDto;
+import com.stefanini.exception.NegocioException;
+import com.stefanini.servico.PessoaServico;
 
 @Path("pessoas")
 @Produces(MediaType.APPLICATION_JSON)
@@ -54,33 +62,26 @@ public class PessoaResource {
    * @return
    */
   @POST
-  public Response adicionarPessoa(@Valid Pessoa pessoa) {
-    if (pessoaServico.validarPessoa(pessoa)) {
-      return Response.ok(pessoaServico.salvar(pessoa)).build();
+  public Response adicionarPessoa(@Valid PessoaDto pessoaDto) {
+    if (pessoaServico.validarPessoa(pessoaDto)) {
+      return Response.ok(pessoaServico.salvar(pessoaDto)).build();
     }
-    return Response.status(Status.METHOD_NOT_ALLOWED).entity(new ErroDto("email", "email já existe", pessoa.getEmail()))
-        .build();
+    return Response.status(Status.METHOD_NOT_ALLOWED).
+        entity(new ErroDto("email", "email já existe", pessoaDto.getEmail())).build();
   }
 
-  
- @POST
- @Path("/anexos")
- public Response adicionarPessoaAnexo(PessoaDto pessoaDto) {
-   return Response.ok(pessoaServico.salvarComAnexo(pessoaDto)).build();
- }
-  
   /**
    *
-   * @param pessoa
+   * @param pessoaDto
    * @return
    */
   @PUT
-  public Response atualizarPessoa(@Valid Pessoa pessoa) {
-    if (pessoaServico.validarPessoa(pessoa)) {
-      return Response.ok(pessoaServico.atualizar(pessoa)).build();
+  public Response atualizarPessoa(@Valid PessoaDto pessoaDto) {
+    if (pessoaServico.validarPessoa(pessoaDto)) {
+      return Response.ok(pessoaServico.atualizar(pessoaDto)).build();
     }
-    return Response.status(Status.METHOD_NOT_ALLOWED).entity(new ErroDto("email", "email já existe", pessoa.getEmail()))
-        .build();
+    return Response.status(Status.METHOD_NOT_ALLOWED).
+        entity(new ErroDto("email", "email já existe", pessoaDto.getEmail())).build();
   }
 
   /**
@@ -99,7 +100,8 @@ public class PessoaResource {
         return Response.status(Response.Status.NOT_FOUND).build();
       }
     } catch (NegocioException e) {
-      return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity(new ErroDto(null, e.getMensagem(), id)).build();
+      return Response.status(Response.Status.METHOD_NOT_ALLOWED)
+          .entity(new ErroDto(null, e.getMensagem(), id)).build();
     }
   }
 

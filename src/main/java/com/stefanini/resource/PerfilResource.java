@@ -108,5 +108,13 @@ public class PerfilResource {
     public Response obterPerfil(@PathParam("id") Long id) {
         return perfilServico.encontrar(id).map(perfil -> Response.ok(perfil).build()).orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
     }
+    
+    @GET
+    @Path("/paginados")
+    public Response obterPerfil(
+        @QueryParam("indexAtual") Integer indexAtual,
+        @QueryParam("qtdPagina") Integer qtdPagina) {
+      return Response.ok(perfilServico.paginarPerfil(indexAtual, qtdPagina)).build();
+    }
 
 }
