@@ -1,9 +1,10 @@
 package com.stefanini.dao.interfaces;
 
-import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 public interface IGenericDao<T, I extends Serializable> {
 

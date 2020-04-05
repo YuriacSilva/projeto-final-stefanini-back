@@ -52,7 +52,7 @@ public class PessoaServico implements Serializable {
    */
   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
   public PessoaDto salvar(@Valid PessoaDto pessoaDto) {
-    pessoaDto.setImagem(PessoaServicoUtil.transfereImagem(pessoaDto));
+    verificaPreenchimentoImagem(pessoaDto);
     Pessoa entidade = pessoaParser.toEntity(pessoaDto);
     return pessoaParser.toDto(dao.salvar(entidade));
   }
@@ -60,7 +60,7 @@ public class PessoaServico implements Serializable {
   /**
    * Validando se existe pessoa com email
    */
-  public Boolean validarPessoa(@Valid PessoaDto pessoaDto) {
+  public Boolean validarPessoa(@Valid PessoaDto pessoaDto) { 
     if (pessoaDto.getId() != null) {
       Optional<Pessoa> encontrar = dao.encontrar(pessoaDto.getId());
       if (encontrar.get().getEmail().equals(pessoaDto.getEmail())) {
@@ -76,7 +76,7 @@ public class PessoaServico implements Serializable {
    */
   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
   public PessoaDto atualizar(@Valid PessoaDto pessoaDto) {
-    pessoaDto.setImagem(PessoaServicoUtil.transfereImagem(pessoaDto));
+    verificaPreenchimentoImagem(pessoaDto);
     Pessoa entidade = pessoaParser.toEntity(pessoaDto);
     return pessoaParser.toDto(dao.atualizar(entidade));
   }
@@ -103,7 +103,6 @@ public class PessoaServico implements Serializable {
   /**
    * Buscar uma Pessoa pelo ID
    */
-//	@Override
   public Optional<Pessoa> encontrar(Long id) {
     Pessoa retorno = dao.encontrar(id).get();
     if(Objects.nonNull(retorno.getImagem()) && !retorno.getImagem().isEmpty()) {
@@ -120,4 +119,10 @@ public class PessoaServico implements Serializable {
     return dao.buscarPessoasPaginadas(indexAtual, qtdPagina);
   }
 
+  private void verificaPreenchimentoImagem(PessoaDto pessoaDto) {
+    if( Objects.nonNull(pessoaDto.getImagem()) && pessoaDto.getImagem().split(",").length > 1 && !pessoaDto.getImagem().equals("data:image/jpeg;base64,null")) {
+      pessoaDto.setImagem(PessoaServicoUtil.transfereImagem(pessoaDto));
+    }
+  }
+  
 }

@@ -1,10 +1,11 @@
 package com.stefanini.dao;
 
-import com.stefanini.dao.abstracao.GenericDao;
-import com.stefanini.model.PessoaPerfil;
+import java.util.stream.Stream;
 
 import javax.persistence.Query;
-import java.util.stream.Stream;
+
+import com.stefanini.dao.abstracao.GenericDao;
+import com.stefanini.model.PessoaPerfil;
 
 /**
  * O Unico objetivo da Dao 

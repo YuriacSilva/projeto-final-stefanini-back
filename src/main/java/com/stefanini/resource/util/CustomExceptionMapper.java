@@ -1,6 +1,7 @@
 package com.stefanini.resource.util;
 
-import com.stefanini.dto.ErroDto;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -8,8 +9,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import com.stefanini.dto.ErroDto;
 
 @Provider
 public class CustomExceptionMapper implements ExceptionMapper<ConstraintViolationException> {

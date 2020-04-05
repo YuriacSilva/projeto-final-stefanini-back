@@ -1,6 +1,5 @@
 package com.stefanini.resource;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;

@@ -54,7 +54,7 @@ public class PerfilServico implements Serializable {
 	 * Validando se existe pessoa com email
 	 */
 	public Boolean validarPerfil(@Valid Perfil perfil){
-		Optional<Perfil> perfil1 = dao.buscarPessoaPorNome(perfil.getNome());
+		Optional<Perfil> perfil1 = dao.buscarPerfilPorNome(perfil.getNome());
 		return perfil1.isEmpty();
 	}
 

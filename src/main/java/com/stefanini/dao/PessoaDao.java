@@ -1,14 +1,13 @@
 package com.stefanini.dao;
 
-import com.stefanini.dao.abstracao.GenericDao;
-import com.stefanini.dto.PaginacaoGenericDTO;
-import com.stefanini.model.Pessoa;
+import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.TypedQuery;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.stefanini.dao.abstracao.GenericDao;
+import com.stefanini.dto.PaginacaoGenericDTO;
+import com.stefanini.model.Pessoa;
 
 /**
  * O Unico objetivo da Dao 
@@ -30,28 +29,25 @@ public class PessoaDao extends GenericDao<Pessoa, Long> {
 	 * @return
 	 */
 	public Optional<Pessoa> buscarPessoaPorEmail(String email){
-		TypedQuery<Pessoa> q2 = entityManager.createQuery(sql, Pessoa.class);
-		q2.setParameter("email", email);
-		return q2.getResultStream().findFirst();
+		TypedQuery<Pessoa> q = entityManager.createQuery(sql, Pessoa.class);
+		q.setParameter("email", email);
+		return q.getResultList().stream().findFirst();
 	}
 
 	public Optional<List<Pessoa>> buscarPessoas(){
 		TypedQuery<Pessoa> q = entityManager.createQuery(sqlFetch + " ORDER BY p.nome", Pessoa.class);
-		return Optional.ofNullable(q.getResultStream().collect(Collectors.toList()));
+		return Optional.ofNullable(q.getResultList());
 	}
 	
 	public PaginacaoGenericDTO<Pessoa> buscarPessoasPaginadas(Integer indexAtual, Integer qtdPagina){
-	  TypedQuery<Pessoa> q = entityManager.createQuery(sqlFetch + " ORDER BY p.nome", Pessoa.class);
+	  TypedQuery<Pessoa> q = entityManager.createQuery(sqlFetch + " ORDER BY p.nome", Pessoa.class); 
 	  PaginacaoGenericDTO<Pessoa> pagina = new PaginacaoGenericDTO<Pessoa>();
 	  Integer qtdResultados = q.getResultList().size();
+	  
 	  pagina.setQtd(qtdResultados);
 	  q.setFirstResult(indexAtual).setMaxResults(qtdPagina);
 	  
-	  if(qtdResultados % qtdPagina == 0) {
-	    pagina.setTotalPaginas(qtdResultados / qtdPagina);
-	  } else {
-	    pagina.setTotalPaginas((qtdResultados / qtdPagina) + 1);
-	  }
+	  pagina.setTotalPaginas((int) Math.ceil( (double) qtdResultados / qtdPagina));
 	  
 	  pagina.setResultados(q.getResultList());
 	  
@@ -62,6 +58,6 @@ public class PessoaDao extends GenericDao<Pessoa, Long> {
 	public Optional<Pessoa> encontrar(Long id) {
 		TypedQuery<Pessoa> q = entityManager.createQuery(sqlFetch + " WHERE p.id = :id", Pessoa.class);
 		q.setParameter("id", id);
-		return q.getResultStream().findFirst();
+		return q.getResultList().stream().findFirst();
 	}
 }

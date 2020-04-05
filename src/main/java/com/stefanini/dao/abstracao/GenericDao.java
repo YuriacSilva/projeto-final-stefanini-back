@@ -1,16 +1,17 @@
 package com.stefanini.dao.abstracao;
 
 
-import com.stefanini.dao.interfaces.IGenericDao;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.validation.Valid;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
+
+import com.stefanini.dao.interfaces.IGenericDao;
 
 /**
  * @author joaopedromilhome
